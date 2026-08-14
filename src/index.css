@@ -1,0 +1,423 @@
+@import "tailwindcss";
+
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  margin: 0;
+
+  background: #0b0b0c;
+  color: white;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  overflow: hidden;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+
+button {
+  cursor: pointer;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+input {
+  outline: none;
+}
+
+
+input:focus,
+input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/* =========================================
+   PAGE TRANSITION
+========================================= */
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.page-enter {
+  animation:
+    pageEnter
+    320ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(255, 255, 255, 0.12)
+    transparent;
+}
+
+
+.custom-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background:
+    rgba(255, 255, 255, 0.12);
+
+  border-radius: 999px;
+}
+
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background:
+    rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================
+   SELECTION
+========================================= */
+
+::selection {
+  background:
+    rgba(255, 255, 255, 0.18);
+
+  color: white;
+}
+
+
+/* =========================================
+   KEYBOARD FOCUS
+========================================= */
+
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid
+    rgba(255, 255, 255, 0.25);
+
+  outline-offset: 4px;
+}
+
+
+input:focus-visible {
+  outline: none;
+}
+
+
+/* =========================================
+   TALK TO ZEIN
+========================================= */
+
+@keyframes zein-conversation-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+
+@keyframes zein-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+
+@keyframes zein-answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+
+.zein-conversation-enter {
+  animation:
+    zein-conversation-in
+    520ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+
+.zein-message-enter {
+  animation:
+    zein-message-in
+    500ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+
+.zein-answer-enter {
+  animation-name:
+    zein-answer-in;
+
+  animation-duration:
+    700ms;
+
+  animation-timing-function:
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+  animation-fill-mode:
+    both;
+}
+
+
+/* =========================================
+   THINKING INDICATOR
+========================================= */
+
+.thinking-dot {
+  display: block;
+
+  width: 6px;
+  height: 6px;
+
+  border-radius: 9999px;
+
+  background:
+    rgb(115 115 115);
+}
+
+
+@keyframes thinking-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.72);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.thinking-dot-1 {
+  animation:
+    thinking-dot-pulse
+    1.35s
+    ease-in-out
+    infinite;
+}
+
+
+.thinking-dot-2 {
+  animation:
+    thinking-dot-pulse
+    1.35s
+    120ms
+    ease-in-out
+    infinite;
+}
+
+
+.thinking-dot-3 {
+  animation:
+    thinking-dot-pulse
+    1.35s
+    240ms
+    ease-in-out
+    infinite;
+}
+
+
+.thinking-dot-4 {
+  animation:
+    thinking-dot-pulse
+    1.35s
+    360ms
+    ease-in-out
+    infinite;
+}
+
+
+/* =========================================
+   ANALYZING
+========================================= */
+
+@keyframes analyzing-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+
+.analyzing-text {
+  animation:
+    analyzing-breathe
+    1.7s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes ellipsis {
+  0%,
+  25% {
+    opacity: 0.15;
+  }
+
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+
+.ellipsis {
+  display: inline-block;
+}
+
+
+.ellipsis-1 {
+  animation:
+    ellipsis
+    1.3s
+    linear
+    infinite;
+}
+
+
+.ellipsis-2 {
+  animation:
+    ellipsis
+    1.3s
+    140ms
+    linear
+    infinite;
+}
+
+
+.ellipsis-3 {
+  animation:
+    ellipsis
+    1.3s
+    280ms
+    linear
+    infinite;
+}
+
+
+/* =========================================
+   FOLLOW-UP INPUT
+========================================= */
+
+.zein-followup-enter {
+  animation:
+    zein-message-in
+    450ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .page-enter,
+  .zein-conversation-enter,
+  .zein-message-enter,
+  .zein-answer-enter,
+  .zein-followup-enter,
+  .thinking-dot,
+  .analyzing-text,
+  .ellipsis {
+    animation: none !important;
+  }
+}
