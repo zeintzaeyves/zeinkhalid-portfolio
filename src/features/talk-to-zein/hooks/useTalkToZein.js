@@ -4,6 +4,10 @@ import {
   useState,
 } from "react"
 
+import {
+  sendTalkToZeinMessage,
+} from "@/services/talkToZeinApi.js"
+
 
 const createMessageId = () => {
   if (
@@ -12,7 +16,6 @@ const createMessageId = () => {
   ) {
     return crypto.randomUUID()
   }
-
 
   return `${Date.now()}-${Math.random()}`
 }
@@ -55,10 +58,10 @@ const useTalkToZein = ({
   const transitionTimerRef =
     useRef(null)
 
-  const responseTimerRef =
+  const answerTimerRef =
     useRef(null)
 
-  const answerTimerRef =
+  const requestControllerRef =
     useRef(null)
 
 
@@ -76,12 +79,20 @@ const useTalkToZein = ({
     )
 
     clearTimeout(
-      responseTimerRef.current,
-    )
-
-    clearTimeout(
       answerTimerRef.current,
     )
+  }
+
+
+  /* =====================================
+     REQUEST CLEANUP
+  ===================================== */
+
+  const cancelRequest = () => {
+    requestControllerRef.current?.abort()
+
+    requestControllerRef.current =
+      null
   }
 
 
@@ -94,17 +105,14 @@ const useTalkToZein = ({
       focusTimerRef.current,
     )
 
-
     if (!open) {
       return
     }
 
-
     if (
       mode === "intro" ||
       (
-        mode ===
-          "conversation" &&
+        mode === "conversation" &&
         !thinking
       )
     ) {
@@ -113,7 +121,6 @@ const useTalkToZein = ({
           inputRef.current?.focus()
         }, 180)
     }
-
 
     return () => {
       clearTimeout(
@@ -136,9 +143,8 @@ const useTalkToZein = ({
       return
     }
 
-
     clearTimers()
-
+    cancelRequest()
 
     setInput("")
     setMessages([])
@@ -159,56 +165,102 @@ const useTalkToZein = ({
   useEffect(() => {
     return () => {
       clearTimers()
+      cancelRequest()
     }
   }, [])
 
 
   /* =====================================
-     TEMPORARY RESPONSE
+     DISPLAY AI ANSWER
   ===================================== */
 
-  const requestResponse = () => {
-    setThinking(true)
-    setThinkingLeaving(false)
+  const displayAnswer = (
+    text,
+  ) => {
+    setThinkingLeaving(true)
 
-
-    responseTimerRef.current =
+    answerTimerRef.current =
       window.setTimeout(() => {
+        setThinking(false)
 
-        setThinkingLeaving(true)
+        setThinkingLeaving(false)
 
+        setMessages(
+          (current) => [
+            ...current,
 
-        answerTimerRef.current =
-          window.setTimeout(() => {
+            {
+              id:
+                createMessageId(),
 
-            setThinking(false)
+              type:
+                "assistant",
 
-            setThinkingLeaving(
-              false,
-            )
+              text,
+            },
+          ],
+        )
 
-
-            setMessages(
-              (current) => [
-                ...current,
-
-                {
-                  id:
-                    createMessageId(),
-
-                  type:
-                    "assistant",
-
-                  text:
-                    "You can ask me about Zein's projects, professional experience, tech stack, full-stack development, UI design, or AI application work.",
-                },
-              ],
-            )
-
-          }, 280)
-
-      }, 1600)
+        requestControllerRef.current =
+          null
+      }, 280)
   }
+
+
+  /* =====================================
+     REAL AI RESPONSE
+  ===================================== */
+
+  const requestResponse =
+    async (
+      question,
+      history = [],
+    ) => {
+      setThinking(true)
+
+      setThinkingLeaving(false)
+
+      cancelRequest()
+
+      const controller =
+        new AbortController()
+
+      requestControllerRef.current =
+        controller
+
+      try {
+        const reply =
+          await sendTalkToZeinMessage({
+            message: question,
+            messages: history,
+            signal:
+              controller.signal,
+          })
+
+        if (
+          controller.signal.aborted
+        ) {
+          return
+        }
+
+        displayAnswer(reply)
+      } catch (error) {
+        if (
+          controller.signal.aborted
+        ) {
+          return
+        }
+
+        console.error(
+          "Talk to Zein request failed:",
+          error,
+        )
+
+        displayAnswer(
+          "I couldn't reach the AI service right now. Try asking me again in a moment.",
+        )
+      }
+    }
 
 
   /* =====================================
@@ -221,7 +273,6 @@ const useTalkToZein = ({
     const question =
       value.trim()
 
-
     if (
       !question ||
       thinking ||
@@ -230,9 +281,7 @@ const useTalkToZein = ({
       return
     }
 
-
     setInput("")
-
 
     const userMessage = {
       id:
@@ -247,15 +296,14 @@ const useTalkToZein = ({
 
 
     /* FIRST QUESTION */
+
     if (
       mode === "intro"
     ) {
       setIntroLeaving(true)
 
-
       transitionTimerRef.current =
         window.setTimeout(() => {
-
           setMessages([
             userMessage,
           ])
@@ -268,17 +316,21 @@ const useTalkToZein = ({
             false,
           )
 
-
-          requestResponse()
-
+          requestResponse(
+            question,
+            [],
+          )
         }, 320)
-
 
       return
     }
 
 
     /* FOLLOW-UP */
+
+    const conversationHistory =
+      messages
+
     setMessages(
       (current) => [
         ...current,
@@ -286,8 +338,10 @@ const useTalkToZein = ({
       ],
     )
 
-
-    requestResponse()
+    requestResponse(
+      question,
+      conversationHistory,
+    )
   }
 
 
