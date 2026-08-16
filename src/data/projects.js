@@ -5,7 +5,7 @@ export const PROJECTS = [
     type: "AI Application",
     description:
       "A personal AI assistant with a custom conversational interface and AI-powered portfolio interactions.",
-    url: null,
+    url: "https://talk-to-zein.vercel.app/",
   },
 
   {
@@ -14,16 +14,16 @@ export const PROJECTS = [
     type: "Full-Stack Application",
     description:
       "A flight booking web application with search, filtering, booking flows, APIs, and database integration.",
-    url: null,
+    url: "https://jetour-flight-booking-system-lbfc.vercel.app/",
   },
 
   {
     id: "havenstone",
-    title: "Havenstone",
+    title: "Web Design Projects",
     type: "Web Design",
     description:
-      "A premium real estate website concept focused on visual hierarchy, responsive design, and refined interface design.",
-    url: null,
+      "Portfolio of web design projects showcasing UI/UX design, responsive layouts, and visual aesthetics.",
+    url: "https://uibyzein.framer.website/",
   },
 
   {
@@ -41,7 +41,7 @@ export const PROJECTS = [
     type: "Frontend Development",
     description:
       "A responsive CMS-driven property experience built with reusable Next.js components and dynamic project data.",
-    url: null,
+    url: "https://futurabyfilinvest.com/",
   },
 
   {
@@ -50,7 +50,7 @@ export const PROJECTS = [
     type: "Frontend Development",
     description:
       "Responsive property interfaces and reusable frontend components within the Filinvest multi-brand web ecosystem.",
-    url: null,
+    url: "https://aspirebyfilinvest.com/",
   },
 
   {
@@ -59,7 +59,7 @@ export const PROJECTS = [
     type: "Frontend Development",
     description:
       "Frontend development and website quality improvements for a premium real estate experience, including performance auditing.",
-    url: null,
+    url: "https://prestigebyfilinvest.com/",
   },
 ]
 

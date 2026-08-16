@@ -3,6 +3,8 @@ import {
   useRef,
 } from "react"
 
+import { X } from "lucide-react"
+
 import Conversation from "@/features/talk-to-zein/components/Conversation.jsx"
 import TalkIntro from "@/features/talk-to-zein/components/TalkIntro.jsx"
 
@@ -68,7 +70,7 @@ const TalkToZeinOverlay = ({
 
 
   /* =====================================
-     MODAL FOCUS
+     MODAL FOCUS + KEYBOARD
   ===================================== */
 
   useEffect(() => {
@@ -86,10 +88,11 @@ const TalkToZeinOverlay = ({
 
 
     /*
-      Give the dialog itself focus first.
-      The hook will move focus to the
-      input shortly afterwards.
-    */
+     * Give dialog focus first.
+     * Input focus is handled shortly
+     * afterwards by useTalkToZein.
+     */
+
     requestAnimationFrame(() => {
       dialog?.focus()
     })
@@ -98,6 +101,25 @@ const TalkToZeinOverlay = ({
     const handleKeyDown = (
       event,
     ) => {
+      /* =================================
+         ESCAPE TO CLOSE
+      ================================= */
+
+      if (
+        event.key === "Escape"
+      ) {
+        event.preventDefault()
+
+        onClose?.()
+
+        return
+      }
+
+
+      /* =================================
+         FOCUS TRAP
+      ================================= */
+
       if (
         event.key !== "Tab"
       ) {
@@ -185,10 +207,9 @@ const TalkToZeinOverlay = ({
 
 
       /*
-        Mobile fallback:
-        the original Talk button may
-        belong to a now-hidden drawer.
-      */
+       * Mobile fallback.
+       */
+
       const menuButton =
         document.querySelector(
           '[data-mobile-menu-trigger="true"]',
@@ -197,7 +218,10 @@ const TalkToZeinOverlay = ({
 
       menuButton?.focus()
     }
-  }, [open])
+  }, [
+    open,
+    onClose,
+  ])
 
 
   return (
@@ -258,8 +282,10 @@ const TalkToZeinOverlay = ({
         }
       `}
     >
+      {/* =====================================
+          ACCESSIBLE TITLE
+      ===================================== */}
 
-      {/* ACCESSIBLE TITLE */}
       <h2
         id="talk-to-zein-dialog-title"
         className="sr-only"
@@ -268,7 +294,111 @@ const TalkToZeinOverlay = ({
       </h2>
 
 
-      {/* CONTENT */}
+      {/* =====================================
+          CLOSE CONTROL
+      ===================================== */}
+
+      <div
+        onClick={(event) =>
+          event.stopPropagation()
+        }
+        className={`
+          fixed
+          right-5
+          top-5
+          z-[120]
+
+          flex
+          items-center
+          gap-3
+
+          transition-[opacity,transform]
+          duration-500
+
+          ease-[cubic-bezier(0.22,1,0.36,1)]
+
+          sm:right-7
+          sm:top-7
+
+          lg:right-10
+          lg:top-9
+
+          ${
+            open
+              ? `
+                translate-y-0
+                opacity-100
+              `
+              : `
+                -translate-y-2
+                opacity-0
+              `
+          }
+        `}
+      >
+        {/* ESC LABEL */}
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="
+            font-mono
+            text-[9px]
+            uppercase
+            tracking-[0.14em]
+
+            text-neutral-600
+
+            transition-colors
+            duration-200
+
+            hover:text-neutral-300
+
+            focus-visible:outline-none
+            focus-visible:text-white
+          "
+        >
+          Esc
+        </button>
+
+
+        {/* X BUTTON */}
+
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close Talk to Zein"
+          className="
+            flex
+            h-9
+            w-9
+            items-center
+            justify-center
+
+            text-neutral-500
+
+            transition-[color,transform]
+            duration-200
+
+            hover:rotate-90
+            hover:text-white
+
+            focus-visible:outline-none
+            focus-visible:text-white
+          "
+        >
+          <X
+            size={19}
+            strokeWidth={1.4}
+          />
+        </button>
+      </div>
+
+
+      {/* =====================================
+          CONTENT
+      ===================================== */}
+
       <div
         onClick={(event) =>
           event.stopPropagation()
@@ -307,6 +437,9 @@ const TalkToZeinOverlay = ({
             max-w-[1100px]
           "
         >
+          {/* =================================
+              INTRO
+          ================================= */}
 
           {mode === "intro" && (
             <TalkIntro
@@ -323,6 +456,10 @@ const TalkToZeinOverlay = ({
             />
           )}
 
+
+          {/* =================================
+              CONVERSATION
+          ================================= */}
 
           {mode ===
             "conversation" && (
@@ -353,10 +490,8 @@ const TalkToZeinOverlay = ({
               }
             />
           )}
-
         </div>
       </div>
-
     </div>
   )
 }

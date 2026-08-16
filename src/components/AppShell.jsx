@@ -2,12 +2,12 @@ import {
   lazy,
   Suspense,
   useEffect,
+  useRef,
   useState,
 } from "react"
 
-import {
-  Menu,
-} from "lucide-react"
+import { flushSync } from "react-dom"
+import { Menu } from "lucide-react"
 
 import PortfolioSidebar from "@/components/PortfolioSidebar.jsx"
 import { NAVIGATION_ITEMS } from "@/config/navigation.js"
@@ -30,6 +30,10 @@ const Experience = lazy(
 
 const SelectedWork = lazy(
   () => import("@/pages/SelectedWork.jsx"),
+)
+
+const AcademicWork = lazy(
+  () => import("@/pages/AcademicWork.jsx"),
 )
 
 const TechStack = lazy(
@@ -65,6 +69,7 @@ const PAGE_COMPONENTS = {
   about: AboutMe,
   experience: Experience,
   projects: SelectedWork,
+  academic: AcademicWork,
   stack: TechStack,
   certifications: Certifications,
   resume: Resume,
@@ -72,15 +77,11 @@ const PAGE_COMPONENTS = {
 }
 
 
-/* =====================================
-   FALLBACK
-===================================== */
-
 const PageFallback = () => {
   return (
     <div
       className="
-        min-h-dvh
+        min-h-screen
         bg-[#0b0b0c]
       "
       role="status"
@@ -90,52 +91,107 @@ const PageFallback = () => {
 }
 
 
-/* =====================================
-   APP SHELL
-===================================== */
-
 const AppShell = () => {
-  const [
-    activePage,
-    setActivePage,
-  ] = useState("home")
+  const [activePage, setActivePage] =
+    useState("home")
 
-  const [
-    talkOpen,
-    setTalkOpen,
-  ] = useState(false)
+  const [talkOpen, setTalkOpen] =
+    useState(false)
 
-  const [
-    talkLoaded,
-    setTalkLoaded,
-  ] = useState(false)
+  const [talkLoaded, setTalkLoaded] =
+    useState(false)
 
-  const [
-    sidebarOpen,
-    setSidebarOpen,
-  ] = useState(false)
+  const [sidebarOpen, setSidebarOpen] =
+    useState(false)
 
-  const [
-    isDesktop,
-    setIsDesktop,
-  ] = useState(() => {
-    if (
-      typeof window === "undefined"
-    ) {
-      return true
-    }
+  const [isDesktop, setIsDesktop] =
+    useState(() => {
+      if (
+        typeof window === "undefined"
+      ) {
+        return false
+      }
 
-    return window.matchMedia(
-      "(min-width: 1024px)",
-    ).matches
-  })
+      return window.matchMedia(
+        "(min-width: 1024px)",
+      ).matches
+    })
+
+
+  const mainRef = useRef(null)
 
 
   useDocumentTitle(activePage)
 
 
   /* =====================================
-     RESPONSIVE SIDEBAR
+     NAVIGATION
+  ===================================== */
+
+  const navigateTo = (page) => {
+    if (!PAGE_COMPONENTS[page]) {
+      return
+    }
+
+    setSidebarOpen(false)
+
+
+    if (page === activePage) {
+      mainRef.current?.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+
+      return
+    }
+
+
+    const changePage = () => {
+      flushSync(() => {
+        setActivePage(page)
+      })
+
+      mainRef.current?.scrollTo({
+        top: 0,
+        behavior: "auto",
+      })
+    }
+
+
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document
+    ) {
+      document.startViewTransition(
+        changePage,
+      )
+
+      return
+    }
+
+
+    changePage()
+  }
+
+
+  /* =====================================
+     TALK TO ZEIN
+  ===================================== */
+
+  const openTalk = () => {
+    setTalkLoaded(true)
+    setSidebarOpen(false)
+    setTalkOpen(true)
+  }
+
+
+  const closeTalk = () => {
+    setTalkOpen(false)
+  }
+
+
+  /* =====================================
+     RESPONSIVE
   ===================================== */
 
   useEffect(() => {
@@ -143,6 +199,7 @@ const AppShell = () => {
       window.matchMedia(
         "(min-width: 1024px)",
       )
+
 
     const handleChange = (
       event,
@@ -156,14 +213,17 @@ const AppShell = () => {
       }
     }
 
+
     setIsDesktop(
       mediaQuery.matches,
     )
+
 
     mediaQuery.addEventListener(
       "change",
       handleChange,
     )
+
 
     return () => {
       mediaQuery.removeEventListener(
@@ -175,45 +235,19 @@ const AppShell = () => {
 
 
   /* =====================================
-     NAVIGATION
-  ===================================== */
-
-  const navigateTo = (
-    page,
-  ) => {
-    setActivePage(page)
-
-    setSidebarOpen(false)
-  }
-
-
-  /* =====================================
-     TALK TO ZEIN
-  ===================================== */
-
-  const openTalk = () => {
-    setTalkLoaded(true)
-
-    setSidebarOpen(false)
-
-    setTalkOpen(true)
-  }
-
-  const closeTalk = () => {
-    setTalkOpen(false)
-  }
-
-
-  /* =====================================
-     KEYBOARD SHORTCUTS
+     KEYBOARD
   ===================================== */
 
   useEffect(() => {
     const handleKeyDown = (
       event,
     ) => {
+      const key =
+        event.key.toLowerCase()
+
       const target =
         event.target
+
 
       const isTyping =
         target instanceof
@@ -223,102 +257,99 @@ const AppShell = () => {
         target?.isContentEditable
 
 
-      /* ESCAPE */
-
-      if (
-        event.key === "Escape"
-      ) {
+      if (event.key === "Escape") {
         if (talkOpen) {
+          event.preventDefault()
           closeTalk()
           return
         }
+
 
         if (
           sidebarOpen &&
           !isDesktop
         ) {
+          event.preventDefault()
           setSidebarOpen(false)
           return
         }
 
-        if (
-          activePage !== "home"
-        ) {
-          navigateTo("home")
-        }
 
         return
       }
 
-
-      /* DISABLE SHORTCUTS
-         WHILE TALK IS OPEN */
 
       if (talkOpen) {
         return
       }
 
 
-      /* DON'T INTERRUPT
-         NORMAL TYPING */
-
       if (
         isTyping &&
         !event.altKey &&
-        !event.ctrlKey &&
-        !event.metaKey
+        !event.ctrlKey
       ) {
         return
       }
 
 
-      const matchedItem =
+      const navigationItem =
         NAVIGATION_ITEMS.find(
           (item) => {
             const shortcut =
               item.shortcut
 
+
             if (!shortcut) {
               return false
             }
 
+
+            const keyMatches =
+              key ===
+              shortcut.key.toLowerCase()
+
+
+            const altMatches =
+              Boolean(
+                shortcut.altKey,
+              ) === event.altKey
+
+
+            const ctrlMatches =
+              Boolean(
+                shortcut.ctrlKey,
+              ) === event.ctrlKey
+
+
             return (
-              event.key.toLowerCase() ===
-                shortcut.key.toLowerCase() &&
-              Boolean(
-                event.altKey,
-              ) ===
-                Boolean(
-                  shortcut.altKey,
-                ) &&
-              Boolean(
-                event.ctrlKey,
-              ) ===
-                Boolean(
-                  shortcut.ctrlKey,
-                )
+              keyMatches &&
+              altMatches &&
+              ctrlMatches
             )
           },
         )
 
 
-      if (!matchedItem) {
+      if (!navigationItem) {
         return
       }
+
 
       event.preventDefault()
 
 
       if (
-        matchedItem.action ===
+        navigationItem.action ===
         "talk"
       ) {
         openTalk()
         return
       }
 
+
       navigateTo(
-        matchedItem.id,
+        navigationItem.id,
       )
     }
 
@@ -327,6 +358,7 @@ const AppShell = () => {
       "keydown",
       handleKeyDown,
     )
+
 
     return () => {
       window.removeEventListener(
@@ -342,222 +374,203 @@ const AppShell = () => {
   ])
 
 
-  /* =====================================
-     ACTIVE PAGE
-  ===================================== */
-
   const ActivePage =
-    PAGE_COMPONENTS[
-      activePage
-    ] ?? Home
+    PAGE_COMPONENTS[activePage] ??
+    Home
+
+
+  const mobileNavigationOpen =
+    sidebarOpen &&
+    !isDesktop
 
 
   return (
     <div
       className="
-        relative
-        min-h-dvh
+        h-screen
         overflow-hidden
+
         bg-[#0b0b0c]
         text-white
       "
     >
-      {/* =================================
-          DESKTOP / MOBILE SIDEBAR
-      ================================= */}
-
       <PortfolioSidebar
-        activePage={
-          activePage
-        }
-        onNavigate={
-          navigateTo
-        }
-        onOpenTalk={
-          openTalk
-        }
+        activePage={activePage}
+        onNavigate={navigateTo}
+        onOpenTalk={openTalk}
         mobileOpen={
-          sidebarOpen
+          mobileNavigationOpen
         }
         onMobileClose={() =>
           setSidebarOpen(false)
         }
-        isDesktop={
-          isDesktop
-        }
+        isDesktop={isDesktop}
       />
 
 
-      {/* =================================
-          MOBILE BACKDROP
-      ================================= */}
+      {mobileNavigationOpen && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Close navigation"
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+          className="
+            fixed
+            inset-0
+            z-40
 
-      {!isDesktop &&
-        sidebarOpen && (
+            bg-black/70
+            backdrop-blur-[2px]
+
+            lg:hidden
+          "
+        />
+      )}
+
+
+      {!talkOpen && (
+        <header
+          className="
+            fixed
+            inset-x-0
+            top-0
+            z-30
+
+            flex
+            h-[54px]
+            items-center
+            justify-between
+
+            border-b
+            border-white/[0.08]
+
+            bg-[#0b0b0c]/95
+            px-6
+
+            backdrop-blur-md
+
+            lg:hidden
+          "
+        >
           <button
             type="button"
             onClick={() =>
-              setSidebarOpen(
-                false,
-              )
+              navigateTo("home")
             }
             className="
-              fixed
-              inset-0
-              z-40
-              bg-black/70
-              backdrop-blur-[2px]
-
-              lg:hidden
-            "
-            aria-label="Close navigation"
-          />
-        )}
-
-
-      {/* =================================
-          MOBILE MENU BUTTON
-      ================================= */}
-
-      {!isDesktop &&
-        !sidebarOpen &&
-        !talkOpen && (
-          <button
-            type="button"
-            onClick={() =>
-              setSidebarOpen(
-                true,
-              )
-            }
-            aria-expanded={
-              sidebarOpen
-            }
-            aria-controls="portfolio-navigation"
-            className="
-              fixed
-              left-4
-              top-4
-              z-[70]
-
-              inline-flex
-              min-h-11
-              items-center
-              gap-2
-
-              border
-              border-white/[0.10]
-
-              bg-[#0f0f10]/95
-
-              px-3.5
-
-              text-xs
+              text-sm
               font-medium
-              uppercase
-              tracking-[0.14em]
-              text-neutral-300
-
-              shadow-lg
-              shadow-black/20
-
-              backdrop-blur-md
+              tracking-[-0.025em]
+              text-neutral-200
 
               transition-colors
               duration-200
 
-              hover:border-white/20
               hover:text-white
+            "
+          >
+            Zein Khalid
+          </button>
 
-              lg:hidden
+
+          <button
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded={
+              sidebarOpen
+            }
+            aria-controls="portfolio-navigation"
+            onClick={() =>
+              setSidebarOpen(true)
+            }
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-end
+
+              text-neutral-400
+
+              transition-colors
+              duration-200
+
+              hover:text-white
             "
           >
             <Menu
-              size={16}
-              strokeWidth={1.7}
+              size={20}
+              strokeWidth={1.5}
             />
-
-            Menu
           </button>
-        )}
+        </header>
+      )}
 
 
-      {/* =================================
-          PAGE CONTENT
-      ================================= */}
-
-      <div
-        className="
-          h-dvh
-          min-w-0
-
-          lg:pl-[320px]
-        "
+      <main
+        ref={mainRef}
         inert={
-          talkOpen
+          talkOpen ||
+          mobileNavigationOpen
             ? true
             : undefined
         }
         aria-hidden={
-          talkOpen
+          talkOpen ||
+          mobileNavigationOpen
             ? true
             : undefined
         }
-      >
-        <main
-          className="
-            h-full
-            min-w-0
-            overflow-x-hidden
-            overflow-y-auto
+        className="
+          h-screen
+          overflow-y-auto
 
-            bg-[#0b0b0c]
+          bg-[#0b0b0c]
+
+          lg:ml-[320px]
+        "
+      >
+        <div
+          className="
+            min-h-full
+            pt-[54px]
+
+            lg:pt-0
           "
-          inert={
-            !isDesktop &&
-            sidebarOpen
-              ? true
-              : undefined
-          }
-          aria-hidden={
-            !isDesktop &&
-            sidebarOpen
-              ? true
-              : undefined
-          }
         >
           <Suspense
             fallback={
               <PageFallback />
             }
           >
-            <ActivePage
-              onNavigate={
-                navigateTo
-              }
-              onOpenTalk={
-                openTalk
-              }
-            />
+            <div
+              className="min-h-full"
+              style={{
+                viewTransitionName:
+                  "portfolio-page",
+              }}
+            >
+              <ActivePage
+                onNavigate={
+                  navigateTo
+                }
+                onOpenTalk={
+                  openTalk
+                }
+              />
+            </div>
           </Suspense>
-        </main>
-      </div>
+        </div>
+      </main>
 
-
-      {/* =================================
-          TALK TO ZEIN
-      ================================= */}
 
       {talkLoaded && (
-        <Suspense
-          fallback={null}
-        >
+        <Suspense fallback={null}>
           <TalkToZeinOverlay
-            open={
-              talkOpen
-            }
-            onClose={
-              closeTalk
-            }
+            open={talkOpen}
+            onClose={closeTalk}
           />
         </Suspense>
       )}

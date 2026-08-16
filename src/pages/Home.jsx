@@ -7,16 +7,15 @@ import FeaturedWorkSection from "@/features/home/components/FeaturedWorkSection.
 import FinalCta from "@/features/home/components/FinalCta.jsx"
 import HeroSection from "@/features/home/components/HeroSection.jsx"
 import LearningPreview from "@/features/home/components/LearningPreview.jsx"
-import OverviewSection from "@/features/home/components/OverviewSection.jsx"
 import StackPreview from "@/features/home/components/StackPreview.jsx"
 
 
 const Home = ({
-  setActivePage,
+  onNavigate,
   onOpenTalk,
 }) => {
   const navigate = (page) => {
-    setActivePage(page)
+    onNavigate?.(page)
   }
 
 
@@ -36,11 +35,6 @@ const Home = ({
             navigate("projects")
           }
           onOpenTalk={onOpenTalk}
-        />
-
-
-        <OverviewSection
-          onNavigate={navigate}
         />
 
 

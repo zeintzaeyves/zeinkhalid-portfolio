@@ -4,7 +4,6 @@ export const NAVIGATION_ITEMS = [
     number: "00",
     label: "Index",
     action: "page",
-
     shortcut: {
       key: "i",
       altKey: true,
@@ -13,24 +12,10 @@ export const NAVIGATION_ITEMS = [
   },
 
   {
-    id: "talk",
-    number: "01",
-    label: "Talk to Zein",
-    action: "talk",
-
-    shortcut: {
-      key: "j",
-      ctrlKey: true,
-      display: "Ctrl + J",
-    },
-  },
-
-  {
     id: "about",
-    number: "02",
+    number: "01",
     label: "About Me",
     action: "page",
-
     shortcut: {
       key: "a",
       altKey: true,
@@ -40,10 +25,9 @@ export const NAVIGATION_ITEMS = [
 
   {
     id: "experience",
-    number: "03",
+    number: "02",
     label: "Experience",
     action: "page",
-
     shortcut: {
       key: "e",
       altKey: true,
@@ -53,10 +37,9 @@ export const NAVIGATION_ITEMS = [
 
   {
     id: "projects",
-    number: "04",
+    number: "03",
     label: "Selected Work",
     action: "page",
-
     shortcut: {
       key: "p",
       altKey: true,
@@ -65,11 +48,22 @@ export const NAVIGATION_ITEMS = [
   },
 
   {
+    id: "academic",
+    number: "04",
+    label: "Academic Work",
+    action: "page",
+    shortcut: {
+      key: "u",
+      altKey: true,
+      display: "Alt + U",
+    },
+  },
+
+  {
     id: "stack",
     number: "05",
     label: "Tech Stack",
     action: "page",
-
     shortcut: {
       key: "s",
       altKey: true,
@@ -82,7 +76,6 @@ export const NAVIGATION_ITEMS = [
     number: "06",
     label: "Certifications",
     action: "page",
-
     shortcut: {
       key: "c",
       altKey: true,
@@ -95,7 +88,6 @@ export const NAVIGATION_ITEMS = [
     number: "07",
     label: "Resume",
     action: "page",
-
     shortcut: {
       key: "r",
       altKey: true,
@@ -108,11 +100,22 @@ export const NAVIGATION_ITEMS = [
     number: "08",
     label: "Contact",
     action: "page",
-
     shortcut: {
       key: "t",
       altKey: true,
       display: "Alt + T",
+    },
+  },
+
+  {
+    id: "talk",
+    number: "09",
+    label: "Talk to Zein",
+    action: "talk",
+    shortcut: {
+      key: "j",
+      ctrlKey: true,
+      display: "Ctrl + J",
     },
   },
 ]

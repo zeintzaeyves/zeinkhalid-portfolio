@@ -14,84 +14,196 @@ import {
 } from "@/config/profile.js"
 
 
-const SOCIAL_LINKS =
-  Object.values(
-    PROFILE.socials,
-  )
-
-
-const getFocusableElements = (
-  container,
-) => {
-  if (!container) {
-    return []
-  }
-
-
-  return Array.from(
-    container.querySelectorAll(
-      `
-        a[href],
-        button:not([disabled]),
-        input:not([disabled]),
-        textarea:not([disabled]),
-        select:not([disabled]),
-        [tabindex]:not([tabindex="-1"])
-      `,
-    ),
-  ).filter(
-    (element) =>
-      element.getClientRects().length > 0,
-  )
-}
+const SWIPE_DISTANCE = 70
 
 
 const PortfolioSidebar = ({
   activePage,
-  setActivePage,
-
+  onNavigate,
   onOpenTalk,
-
-  mobileOpen = false,
-  onClose,
-
-  isDesktop = true,
+  mobileOpen,
+  onMobileClose,
+  isDesktop,
 }) => {
   const sidebarRef =
     useRef(null)
 
-  const closeButtonRef =
+  const touchStartXRef =
     useRef(null)
 
-  const previousFocusRef =
+  const touchEndXRef =
     useRef(null)
+
+
+  const sidebarHidden =
+    !isDesktop &&
+    !mobileOpen
+
+
+  /*
+   * Keep normal pages together.
+   * Talk to Zein is rendered separately
+   * at the end of the navigation.
+   */
+  const pageItems =
+    NAVIGATION_ITEMS.filter(
+      (item) =>
+        item.action !== "talk",
+    )
+
+  const talkItem =
+    NAVIGATION_ITEMS.find(
+      (item) =>
+        item.action === "talk",
+    )
 
 
   /* =====================================
-     MOBILE FOCUS MANAGEMENT
+     NAVIGATION
   ===================================== */
 
-  useEffect(() => {
+  const handleNavigation = (
+    item,
+  ) => {
     if (
-      !mobileOpen ||
-      isDesktop
+      item.action === "talk"
+    ) {
+      onOpenTalk?.()
+      onMobileClose?.()
+      return
+    }
+
+    onNavigate?.(item.id)
+    onMobileClose?.()
+  }
+
+
+  const handleProfileClick =
+    () => {
+      onNavigate?.("home")
+      onMobileClose?.()
+    }
+
+
+  /* =====================================
+     SWIPE LEFT TO CLOSE
+  ===================================== */
+
+  const handleTouchStart = (
+    event,
+  ) => {
+    if (isDesktop) {
+      return
+    }
+
+    const x =
+      event.touches[0].clientX
+
+    touchStartXRef.current = x
+    touchEndXRef.current = x
+  }
+
+
+  const handleTouchMove = (
+    event,
+  ) => {
+    if (isDesktop) {
+      return
+    }
+
+    touchEndXRef.current =
+      event.touches[0].clientX
+  }
+
+
+  const handleTouchEnd = () => {
+    if (
+      isDesktop ||
+      touchStartXRef.current ===
+        null ||
+      touchEndXRef.current ===
+        null
     ) {
       return
     }
 
 
-    previousFocusRef.current =
-      document.activeElement
+    const distance =
+      touchEndXRef.current -
+      touchStartXRef.current
 
 
-    const focusTimer =
-      window.setTimeout(() => {
-        closeButtonRef.current?.focus()
-      }, 50)
+    if (
+      distance <
+      -SWIPE_DISTANCE
+    ) {
+      onMobileClose?.()
+    }
+
+
+    touchStartXRef.current =
+      null
+
+    touchEndXRef.current =
+      null
+  }
+
+
+  /* =====================================
+     MOBILE INITIAL FOCUS
+  ===================================== */
+
+  useEffect(() => {
+    if (
+      isDesktop ||
+      !mobileOpen
+    ) {
+      return
+    }
 
 
     const sidebar =
       sidebarRef.current
+
+    if (!sidebar) {
+      return
+    }
+
+
+    const firstFocusable =
+      sidebar.querySelector(
+        "button:not([disabled]), a[href]",
+      )
+
+
+    requestAnimationFrame(() => {
+      firstFocusable?.focus()
+    })
+  }, [
+    mobileOpen,
+    isDesktop,
+  ])
+
+
+  /* =====================================
+     MOBILE FOCUS TRAP
+  ===================================== */
+
+  useEffect(() => {
+    if (
+      isDesktop ||
+      !mobileOpen
+    ) {
+      return
+    }
+
+
+    const sidebar =
+      sidebarRef.current
+
+    if (!sidebar) {
+      return
+    }
 
 
     const handleKeyDown = (
@@ -105,16 +217,21 @@ const PortfolioSidebar = ({
 
 
       const focusable =
-        getFocusableElements(
-          sidebar,
+        Array.from(
+          sidebar.querySelectorAll(
+            `
+              button:not([disabled]),
+              a[href],
+              input:not([disabled]),
+              textarea:not([disabled]),
+              select:not([disabled]),
+              [tabindex]:not([tabindex="-1"])
+            `,
+          ),
         )
 
 
-      if (
-        focusable.length === 0
-      ) {
-        event.preventDefault()
-
+      if (!focusable.length) {
         return
       }
 
@@ -134,9 +251,7 @@ const PortfolioSidebar = ({
           first
       ) {
         event.preventDefault()
-
         last.focus()
-
         return
       }
 
@@ -147,41 +262,21 @@ const PortfolioSidebar = ({
           last
       ) {
         event.preventDefault()
-
         first.focus()
       }
     }
 
 
-    sidebar?.addEventListener(
+    sidebar.addEventListener(
       "keydown",
       handleKeyDown,
     )
 
-
     return () => {
-      clearTimeout(
-        focusTimer,
-      )
-
-
-      sidebar?.removeEventListener(
+      sidebar.removeEventListener(
         "keydown",
         handleKeyDown,
       )
-
-
-      const previous =
-        previousFocusRef.current
-
-
-      if (
-        previous &&
-        document.contains(previous) &&
-        !previous.closest("[inert]")
-      ) {
-        previous.focus()
-      }
     }
   }, [
     mobileOpen,
@@ -189,169 +284,78 @@ const PortfolioSidebar = ({
   ])
 
 
-  /* =====================================
-     NAVIGATION
-  ===================================== */
-
-  const handleNavigation = (
-    item,
-  ) => {
-    if (
-      item.action === "talk"
-    ) {
-      onOpenTalk()
-
-      return
-    }
-
-
-    setActivePage(
-      item.id,
-    )
-  }
-
-
-  const isActive = (item) =>
-    item.action === "page" &&
-    activePage === item.id
-
-
-  const sidebarHidden =
-    !isDesktop &&
-    !mobileOpen
-
-
   return (
-<aside
-  ref={sidebarRef}
+    <aside
+      ref={sidebarRef}
+      id="portfolio-navigation"
+      inert={
+        sidebarHidden
+          ? true
+          : undefined
+      }
+      onTouchStart={
+        handleTouchStart
+      }
+      onTouchMove={
+        handleTouchMove
+      }
+      onTouchEnd={
+        handleTouchEnd
+      }
+      className={`
+        fixed
+        inset-y-0
+        left-0
+        z-50
 
-  id="portfolio-navigation"
+        flex
+        w-[min(320px,calc(100vw-24px))]
+        flex-col
 
-  aria-label="Portfolio navigation"
+        border-r
+        border-white/[0.07]
 
-  inert={
-    sidebarHidden
-      ? true
-      : undefined
-  }
+        bg-[#0f0f10]
 
-  className={`
-    fixed
-    inset-y-0
-    left-0
-    z-50
+        transition-transform
+        duration-300
+        ease-out
 
-    flex
-    h-[100dvh]
+        touch-pan-y
 
-    w-[min(86vw,320px)]
-    shrink-0
-    flex-col
+        lg:w-[320px]
 
-    border-r
-    border-white/[0.07]
-
-    bg-[#0f0f10]
-
-    transition-transform
-    duration-300
-
-    ease-[cubic-bezier(0.22,1,0.36,1)]
-
-    lg:static
-    lg:z-auto
-    lg:w-[320px]
-    lg:translate-x-0
-    lg:pointer-events-auto
-    lg:transition-none
-
-    ${
-      mobileOpen
-        ? `
-          translate-x-0
-          pointer-events-auto
-        `
-        : `
-          -translate-x-full
-          pointer-events-none
-
-          lg:translate-x-0
-          lg:pointer-events-auto
-        `
-    }
-  `}
->
-
+        ${
+          isDesktop ||
+          mobileOpen
+            ? "translate-x-0"
+            : "-translate-x-full"
+        }
+      `}
+    >
       {/* =====================================
           PROFILE
       ===================================== */}
-      <header
-        className="
-          shrink-0
 
+      <div
+        className="
           border-b
           border-white/[0.07]
 
           px-5
-          pb-5
-          pt-5
+          pb-8
+          pt-10
+
+          sm:px-6
+          lg:px-7
         "
       >
-
-        {/* MOBILE CLOSE */}
-        <div
-          className="
-            mb-4
-
-            flex
-            justify-end
-
-            lg:hidden
-          "
-        >
-          <button
-            ref={closeButtonRef}
-
-            type="button"
-
-            onClick={onClose}
-
-            aria-label="Close navigation"
-
-            className="
-              flex
-              min-h-11
-              items-center
-
-              font-mono
-              text-[10px]
-              uppercase
-              tracking-[0.12em]
-
-              text-neutral-600
-
-              transition-colors
-              duration-300
-
-              hover:text-white
-            "
-          >
-            Close
-          </button>
-        </div>
-
-
-        {/* PROFILE */}
         <button
           type="button"
-
-          onClick={() =>
-            setActivePage("home")
+          onClick={
+            handleProfileClick
           }
-
           className="
-            group
-
             flex
             w-full
             items-center
@@ -360,175 +364,108 @@ const PortfolioSidebar = ({
             text-left
           "
         >
-
-          <div
+          <img
+            src={profileImage}
+            alt=""
+            width="52"
+            height="52"
             className="
-              h-[50px]
-              w-[50px]
+              h-12
+              w-12
               shrink-0
-
-              overflow-hidden
               rounded-full
-
-              bg-[#171718]
+              object-cover
             "
-          >
-            <img
-              src={profileImage}
-              alt={PROFILE.name}
-
-              loading="eager"
-              decoding="async"
-
-              className="
-                h-full
-                w-full
-
-                object-cover
-                object-center
-
-                transition-opacity
-                duration-300
-
-                group-hover:opacity-90
-              "
-            />
-          </div>
+          />
 
 
           <div className="min-w-0">
-
-            <h1
+            <p
               className="
                 truncate
-
-                text-[14px]
+                text-sm
                 font-medium
-                leading-tight
-
                 tracking-[-0.02em]
-
                 text-neutral-100
-
-                transition-colors
-                duration-300
-
-                group-hover:text-white
               "
             >
               {PROFILE.name}
-            </h1>
+            </p>
 
 
-            <div className="mt-2">
+            <div
+              className="
+                mt-1
+                text-xs
+                leading-5
+                text-neutral-600
+              "
+            >
+              <p>
+                Full-Stack Developer
+              </p>
 
-              {PROFILE.roles.map(
-                (
-                  role,
-                  index,
-                ) => (
-                  <p
-                    key={role}
-                    className={`
-                      text-[11px]
-                      leading-[1.6]
-
-                      ${
-                        index === 0
-                          ? "text-neutral-500"
-                          : "text-neutral-600"
-                      }
-                    `}
-                  >
-                    {role}
-                  </p>
-                ),
-              )}
-
+              <p>
+                AI Application Developer
+              </p>
             </div>
-
           </div>
-
         </button>
-
-      </header>
+      </div>
 
 
       {/* =====================================
           NAVIGATION
       ===================================== */}
-      <div
+
+      <nav
+        aria-label="Portfolio navigation"
         className="
-          flex
-          min-h-0
           flex-1
-          flex-col
+          overflow-y-auto
+
+          px-5
+          py-7
+
+          sm:px-6
+          lg:px-7
         "
       >
-
-        <div
+        <p
           className="
-            shrink-0
+            mb-3
 
-            px-5
-            pb-3
-            pt-7
+            font-mono
+            text-[9px]
+            uppercase
+            tracking-[0.2em]
+            text-neutral-700
           "
         >
-          <p
-            className="
-              text-[9px]
-              uppercase
-              tracking-[0.2em]
-
-              text-neutral-600
-            "
-          >
-            Navigation
-          </p>
-        </div>
+          Navigation
+        </p>
 
 
-        <nav
-          className="
-            custom-scroll
+        {/* NORMAL PAGES */}
 
-            min-h-0
-            flex-1
-
-            overflow-y-auto
-
-            px-5
-            pb-6
-          "
-          aria-label="Pages"
-        >
-
-          {NAVIGATION_ITEMS.map(
+        <div>
+          {pageItems.map(
             (item) => {
-              const active =
-                isActive(item)
+              const isActive =
+                activePage ===
+                item.id
 
 
               return (
                 <button
                   key={item.id}
-
                   type="button"
-
                   onClick={() =>
                     handleNavigation(
                       item,
                     )
                   }
-
-                  aria-current={
-                    active
-                      ? "page"
-                      : undefined
-                  }
-
-                  className="
+                  className={`
                     group
 
                     flex
@@ -537,113 +474,159 @@ const PortfolioSidebar = ({
                     items-center
 
                     text-left
-                  "
-                >
 
+                    transition-colors
+                    duration-200
+
+                    ${
+                      isActive
+                        ? "text-white"
+                        : "text-neutral-500 hover:text-neutral-200"
+                    }
+                  `}
+                >
                   <span
-                    className={`
+                    className="
                       w-9
                       shrink-0
 
                       font-mono
-                      text-[9px]
-                      tracking-[0.08em]
-
-                      transition-colors
-                      duration-300
-
-                      ${
-                        active
-                          ? "text-neutral-500"
-                          : `
-                            text-neutral-700
-                            group-hover:text-neutral-500
-                          `
-                      }
-                    `}
+                      text-[8px]
+                      text-neutral-700
+                    "
                   >
                     {item.number}
                   </span>
 
 
                   <span
-                    className={`
-                      text-[13px]
-
-                      transition-colors
-                      duration-300
-
-                      ${
-                        active
-                          ? "text-white"
-                          : `
-                            text-neutral-500
-                            group-hover:text-neutral-200
-                          `
-                      }
-                    `}
+                    className="
+                      flex-1
+                      text-sm
+                    "
                   >
                     {item.label}
                   </span>
 
 
                   <span
-                    className={`
-                      ml-auto
+                    className="
+                      ml-3
 
                       font-mono
-                      text-[9px]
-
-                      tracking-[0.03em]
+                      text-[8px]
+                      tracking-[0.06em]
+                      text-neutral-700
 
                       transition-colors
-                      duration-300
+                      duration-200
 
-                      ${
-                        active
-                          ? "text-neutral-500"
-                          : `
-                            text-neutral-700
-                            group-hover:text-neutral-500
-                          `
-                      }
-                    `}
+                      group-hover:text-neutral-500
+                    "
                   >
-                    {item.shortcut.display}
+                    {
+                      item.shortcut
+                        ?.display
+                    }
                   </span>
-
                 </button>
               )
             },
           )}
+        </div>
 
-        </nav>
 
-      </div>
+        {/* =====================================
+            TALK TO ZEIN
+            SMALL + LAST ITEM
+        ===================================== */}
+
+        {talkItem && (
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation(
+                talkItem,
+              )
+            }
+            className="
+              group
+
+              mt-5
+
+              flex
+              min-h-10
+              w-full
+              items-center
+
+              border-t
+              border-white/[0.06]
+
+              pt-5
+
+              text-left
+              text-neutral-600
+
+              transition-colors
+              duration-200
+
+              hover:text-neutral-300
+            "
+          >
+            <span
+              className="
+                flex-1
+
+                font-mono
+                text-[9px]
+                uppercase
+                tracking-[0.14em]
+              "
+            >
+              Talk to Zein
+            </span>
+
+
+            <span
+              className="
+                font-mono
+                text-[8px]
+                tracking-[0.06em]
+                text-neutral-700
+              "
+            >
+              Ctrl + J
+            </span>
+          </button>
+        )}
+      </nav>
 
 
       {/* =====================================
           FOOTER
       ===================================== */}
-      <footer
-        className="
-          shrink-0
 
+      <div
+        className="
           border-t
           border-white/[0.07]
 
           px-5
-          pb-4
-          pt-4
+          pb-5
+          pt-5
+
+          sm:px-6
+          lg:px-7
         "
       >
-
         <p
           className="
+            mb-5
+
+            font-mono
             text-[9px]
             uppercase
             tracking-[0.2em]
-
             text-neutral-700
           "
         >
@@ -653,92 +636,65 @@ const PortfolioSidebar = ({
 
         <div
           className="
-            mt-2
-
             flex
-            items-center
-            gap-4
+            flex-wrap
+            gap-x-5
+            gap-y-3
           "
         >
+          {Object.values(
+            PROFILE.socials,
+          ).map((social) => (
+            <a
+              key={
+                social.label
+              }
+              href={social.url}
+              target="_blank"
+              rel="noreferrer"
+              className="
+                text-xs
+                font-medium
+                text-neutral-300
 
-          {SOCIAL_LINKS.map(
-            (social) => (
-              <a
-                key={social.label}
+                transition-colors
+                duration-200
 
-                href={social.url}
-
-                target="_blank"
-                rel="noopener noreferrer"
-
-                aria-label={
-                  `${social.label}, opens in a new tab`
-                }
-
-                className="
-                  inline-flex
-                  min-h-11
-                  items-center
-
-                  text-[11px]
-                  text-neutral-600
-
-                  transition-colors
-                  duration-300
-
-                  hover:text-neutral-200
-                "
-              >
-                {social.label}
-              </a>
-            ),
-          )}
-
+                hover:text-white
+              "
+            >
+              {social.label}
+            </a>
+          ))}
         </div>
 
 
         <div
           className="
+            mt-5
+
+            flex
+            justify-between
+
             border-t
-            border-white/[0.05]
+            border-white/[0.06]
 
             pt-4
+
+            font-mono
+            text-[8px]
+            text-neutral-700
           "
         >
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              gap-5
-            "
-          >
+          <span>
+            {PROFILE.location}
+          </span>
 
-            <span
-              className="
-                text-[10px]
-                text-neutral-600
-              "
-            >
-              {PROFILE.location}
-            </span>
-
-
-            <span
-              className="
-                font-mono
-                text-[9px]
-                text-neutral-700
-              "
-            >
-              {PROFILE.timezone}
-            </span>
-
-          </div>
+          <span>
+            {PROFILE.timezone}
+          </span>
         </div>
-
-      </footer>
-
+      </div>
     </aside>
   )
 }
