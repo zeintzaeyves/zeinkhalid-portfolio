@@ -13,9 +13,7 @@ import {
   PROFILE,
 } from "@/config/profile.js"
 
-
 const SWIPE_DISTANCE = 70
-
 
 const PortfolioSidebar = ({
   activePage,
@@ -25,20 +23,13 @@ const PortfolioSidebar = ({
   onMobileClose,
   isDesktop,
 }) => {
-  const sidebarRef =
-    useRef(null)
+  const sidebarRef = useRef(null)
 
-  const touchStartXRef =
-    useRef(null)
-
-  const touchEndXRef =
-    useRef(null)
-
+  const touchStartXRef = useRef(null)
+  const touchEndXRef = useRef(null)
 
   const sidebarHidden =
-    !isDesktop &&
-    !mobileOpen
-
+    !isDesktop && !mobileOpen
 
   /*
    * Keep normal pages together.
@@ -56,7 +47,6 @@ const PortfolioSidebar = ({
       (item) =>
         item.action === "talk",
     )
-
 
   /* =====================================
      NAVIGATION
@@ -77,13 +67,11 @@ const PortfolioSidebar = ({
     onMobileClose?.()
   }
 
-
   const handleProfileClick =
     () => {
       onNavigate?.("home")
       onMobileClose?.()
     }
-
 
   /* =====================================
      SWIPE LEFT TO CLOSE
@@ -103,7 +91,6 @@ const PortfolioSidebar = ({
     touchEndXRef.current = x
   }
 
-
   const handleTouchMove = (
     event,
   ) => {
@@ -114,7 +101,6 @@ const PortfolioSidebar = ({
     touchEndXRef.current =
       event.touches[0].clientX
   }
-
 
   const handleTouchEnd = () => {
     if (
@@ -127,11 +113,9 @@ const PortfolioSidebar = ({
       return
     }
 
-
     const distance =
       touchEndXRef.current -
       touchStartXRef.current
-
 
     if (
       distance <
@@ -140,14 +124,12 @@ const PortfolioSidebar = ({
       onMobileClose?.()
     }
 
-
     touchStartXRef.current =
       null
 
     touchEndXRef.current =
       null
   }
-
 
   /* =====================================
      MOBILE INITIAL FOCUS
@@ -161,7 +143,6 @@ const PortfolioSidebar = ({
       return
     }
 
-
     const sidebar =
       sidebarRef.current
 
@@ -169,12 +150,10 @@ const PortfolioSidebar = ({
       return
     }
 
-
     const firstFocusable =
       sidebar.querySelector(
         "button:not([disabled]), a[href]",
       )
-
 
     requestAnimationFrame(() => {
       firstFocusable?.focus()
@@ -183,7 +162,6 @@ const PortfolioSidebar = ({
     mobileOpen,
     isDesktop,
   ])
-
 
   /* =====================================
      MOBILE FOCUS TRAP
@@ -197,14 +175,12 @@ const PortfolioSidebar = ({
       return
     }
 
-
     const sidebar =
       sidebarRef.current
 
     if (!sidebar) {
       return
     }
-
 
     const handleKeyDown = (
       event,
@@ -214,7 +190,6 @@ const PortfolioSidebar = ({
       ) {
         return
       }
-
 
       const focusable =
         Array.from(
@@ -230,11 +205,9 @@ const PortfolioSidebar = ({
           ),
         )
 
-
       if (!focusable.length) {
         return
       }
-
 
       const first =
         focusable[0]
@@ -243,7 +216,6 @@ const PortfolioSidebar = ({
         focusable[
           focusable.length - 1
         ]
-
 
       if (
         event.shiftKey &&
@@ -255,7 +227,6 @@ const PortfolioSidebar = ({
         return
       }
 
-
       if (
         !event.shiftKey &&
         document.activeElement ===
@@ -265,7 +236,6 @@ const PortfolioSidebar = ({
         first.focus()
       }
     }
-
 
     sidebar.addEventListener(
       "keydown",
@@ -282,7 +252,6 @@ const PortfolioSidebar = ({
     mobileOpen,
     isDesktop,
   ])
-
 
   return (
     <aside
@@ -378,12 +347,11 @@ const PortfolioSidebar = ({
             "
           />
 
-
           <div className="min-w-0">
             <p
               className="
                 truncate
-                text-sm
+                text-[15px]
                 font-medium
                 tracking-[-0.02em]
                 text-neutral-100
@@ -392,27 +360,25 @@ const PortfolioSidebar = ({
               {PROFILE.name}
             </p>
 
-
             <div
               className="
                 mt-1
-                text-xs
+                text-[13px]
                 leading-5
                 text-neutral-600
               "
             >
               <p>
-                Full-Stack Developer
+                Frontend Developer
               </p>
 
               <p>
-                AI Application Developer
+                Website Designer
               </p>
             </div>
           </div>
         </button>
       </div>
-
 
       {/* =====================================
           NAVIGATION
@@ -436,7 +402,7 @@ const PortfolioSidebar = ({
             mb-3
 
             font-mono
-            text-[9px]
+            text-[11px]
             uppercase
             tracking-[0.2em]
             text-neutral-700
@@ -444,7 +410,6 @@ const PortfolioSidebar = ({
         >
           Navigation
         </p>
-
 
         {/* NORMAL PAGES */}
 
@@ -454,7 +419,6 @@ const PortfolioSidebar = ({
               const isActive =
                 activePage ===
                 item.id
-
 
               return (
                 <button
@@ -491,30 +455,28 @@ const PortfolioSidebar = ({
                       shrink-0
 
                       font-mono
-                      text-[8px]
+                      text-[10px]
                       text-neutral-700
                     "
                   >
                     {item.number}
                   </span>
 
-
                   <span
                     className="
                       flex-1
-                      text-sm
+                      text-base
                     "
                   >
                     {item.label}
                   </span>
-
 
                   <span
                     className="
                       ml-3
 
                       font-mono
-                      text-[8px]
+                      text-[10px]
                       tracking-[0.06em]
                       text-neutral-700
 
@@ -535,72 +497,155 @@ const PortfolioSidebar = ({
           )}
         </div>
 
-
         {/* =====================================
             TALK TO ZEIN
             SMALL + LAST ITEM
         ===================================== */}
+{/* =====================================
+    TALK TO ZEIN
+===================================== */}
 
-        {talkItem && (
-          <button
-            type="button"
-            onClick={() =>
-              handleNavigation(
-                talkItem,
-              )
-            }
-            className="
-              group
+{talkItem && (
+  <button
+    type="button"
+    onClick={() =>
+      handleNavigation(talkItem)
+    }
+    className="
+      group
+      relative
+      mt-6
+      w-full
+      overflow-hidden
+      rounded-xl
+      border
+      border-white/[0.08]
+      bg-white/[0.025]
+      p-4
+      text-left
+      transition-all
+      duration-300
+      hover:border-white/[0.16]
+      hover:bg-white/[0.05]
+    "
+  >
+    {/* subtle glow */}
+    <div
+      className="
+        pointer-events-none
+        absolute
+        -right-10
+        -top-10
+        h-24
+        w-24
+        rounded-full
+        bg-white/[0.04]
+        blur-2xl
+        transition-all
+        duration-500
+        group-hover:bg-white/[0.08]
+      "
+    />
 
-              mt-5
+    <div className="relative">
+      {/* top row */}
+      <div className="flex items-center justify-between">
+        <span
+          className="
+            font-mono
+            text-[9px]
+            uppercase
+            tracking-[0.18em]
+            text-neutral-600
+          "
+        >
+          Personal AI
+        </span>
 
-              flex
-              min-h-10
-              w-full
-              items-center
+        <span
+          className="
+            flex
+            h-6
+            w-6
+            items-center
+            justify-center
+            rounded-full
+            border
+            border-white/[0.08]
+            text-[11px]
+            text-neutral-500
+            transition-all
+            duration-300
+            group-hover:border-white/[0.18]
+            group-hover:text-white
+          "
+        >
+          ↗
+        </span>
+      </div>
 
-              border-t
-              border-white/[0.06]
+      {/* title */}
+      <div className="mt-5">
+        <p
+          className="
+            text-[15px]
+            font-medium
+            tracking-[-0.02em]
+            text-neutral-200
+            transition-colors
+            duration-300
+            group-hover:text-white
+          "
+        >
+          Talk to Zein
+        </p>
 
-              pt-5
+        <p
+          className="
+            mt-1.5
+            max-w-[210px]
+            text-[11px]
+            leading-5
+            text-neutral-600
+            transition-colors
+            duration-300
+            group-hover:text-neutral-500
+          "
+        >
+          Ask me anything about my work,
+          projects, and beyond.
+        </p>
+      </div>
 
-              text-left
-              text-neutral-600
+      {/* bottom */}
+      <div className="mt-5 flex items-center justify-between">
+        <span
+          className="
+            font-mono
+            text-[9px]
+            uppercase
+            tracking-[0.12em]
+            text-neutral-700
+          "
+        >
+          AI Assistant
+        </span>
 
-              transition-colors
-              duration-200
-
-              hover:text-neutral-300
-            "
-          >
-            <span
-              className="
-                flex-1
-
-                font-mono
-                text-[9px]
-                uppercase
-                tracking-[0.14em]
-              "
-            >
-              Talk to Zein
-            </span>
-
-
-            <span
-              className="
-                font-mono
-                text-[8px]
-                tracking-[0.06em]
-                text-neutral-700
-              "
-            >
-              Ctrl + J
-            </span>
-          </button>
-        )}
+        <span
+          className="
+            font-mono
+            text-[9px]
+            tracking-[0.06em]
+            text-neutral-700
+          "
+        >
+          Ctrl + J
+        </span>
+      </div>
+    </div>
+  </button>
+)}
       </nav>
-
 
       {/* =====================================
           FOOTER
@@ -624,7 +669,7 @@ const PortfolioSidebar = ({
             mb-5
 
             font-mono
-            text-[9px]
+            text-[11px]
             uppercase
             tracking-[0.2em]
             text-neutral-700
@@ -632,7 +677,6 @@ const PortfolioSidebar = ({
         >
           Elsewhere
         </p>
-
 
         <div
           className="
@@ -653,7 +697,7 @@ const PortfolioSidebar = ({
               target="_blank"
               rel="noreferrer"
               className="
-                text-xs
+                text-[13px]
                 font-medium
                 text-neutral-300
 
@@ -668,7 +712,6 @@ const PortfolioSidebar = ({
           ))}
         </div>
 
-
         <div
           className="
             mt-5
@@ -682,7 +725,7 @@ const PortfolioSidebar = ({
             pt-4
 
             font-mono
-            text-[8px]
+            text-[10px]
             text-neutral-700
           "
         >
@@ -698,6 +741,5 @@ const PortfolioSidebar = ({
     </aside>
   )
 }
-
 
 export default PortfolioSidebar

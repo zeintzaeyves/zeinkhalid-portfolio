@@ -1,30 +1,19 @@
-import PageContainer from "@/components/layout/PageContainer.jsx"
-import PageHeader from "@/components/layout/PageHeader.jsx"
-import PageIntro from "@/components/layout/PageIntro.jsx"
+import PageContainer from "@/components/layout/PageContainer.jsx";
+import PageHeader from "@/components/layout/PageHeader.jsx";
+import PageIntro from "@/components/layout/PageIntro.jsx";
 
-import FocusRow from "@/features/about/components/FocusRow.jsx"
+import FocusRow from "@/features/about/components/FocusRow.jsx";
 
-import {
-  PROFILE,
-} from "@/config/profile.js"
+import { PROFILE } from "@/config/profile.js";
 
-import {
-  ABOUT_FOCUS,
-} from "@/data/about.js"
-
+import { ABOUT_FOCUS } from "@/data/about.js";
 
 const AboutMe = () => {
   return (
     <div className="min-h-full bg-[#0b0b0c]">
-
-      <PageHeader
-        eyebrow="Profile / About"
-        meta={PROFILE.location}
-      />
-
+      <PageHeader eyebrow="Profile / About" meta={PROFILE.location} />
 
       <PageContainer>
-
         {/* =====================================
             INTRO
         ===================================== */}
@@ -35,12 +24,8 @@ const AboutMe = () => {
           }
         >
           Full-Stack Developer
-
-          <span className="text-neutral-600">
-            {" "}/ AI Application Developer.
-          </span>
+          <span className="text-neutral-600"> / AI Application Developer.</span>
         </PageIntro>
-
 
         {/* =====================================
             QUICK FACTS
@@ -64,33 +49,15 @@ const AboutMe = () => {
               lg:grid-cols-4
             "
           >
+            <Fact label="Role" value={PROFILE.roles[0]} />
 
-            <Fact
-              label="Role"
-              value={PROFILE.roles[0]}
-            />
+            <Fact label="Specialization" value={PROFILE.roles[1]} />
 
+            <Fact label="Location" value={PROFILE.location} />
 
-            <Fact
-              label="Specialization"
-              value={PROFILE.roles[1]}
-            />
-
-
-            <Fact
-              label="Location"
-              value={PROFILE.location}
-            />
-
-
-            <Fact
-              label="Focus"
-              value="Web · AI · UI"
-            />
-
+            <Fact label="Focus" value="Web · AI · UI" />
           </div>
         </section>
-
 
         {/* =====================================
             ABOUT
@@ -106,11 +73,7 @@ const AboutMe = () => {
             lg:gap-20
           "
         >
-
-          <SectionLabel>
-            01 / About
-          </SectionLabel>
-
+          <SectionLabel>01 / About</SectionLabel>
 
           <div
             className="
@@ -124,32 +87,28 @@ const AboutMe = () => {
             "
           >
             <p>
-              My work sits between software engineering
-              and interface design. I enjoy turning product
-              requirements and visual concepts into
-              responsive applications that are practical to
-              develop and maintain.
+              I’m a developer and UI/UX designer focused on building thoughtful
+              digital experiences across frontend, full-stack, and AI-driven
+              applications.
             </p>
 
-
             <p>
-              My experience includes production frontend
-              development, CMS-driven websites, independent
-              full-stack application work, and AI-focused
-              interfaces.
+              My experience ranges from production frontend development and
+              CMS-driven websites to independent full-stack projects and
+              AI-powered interfaces. I enjoy working across the boundary between
+              design and engineering, turning ideas into interfaces that
+              actually work.
             </p>
 
-
             <p>
-              I care about clean implementation,
-              responsiveness, reusable architecture,
-              performance, and making sure the final
-              interface works beyond the design file.
+              I’m an AI-first developer who uses AI as a thinking partner
+              throughout the development process while keeping the decisions,
+              implementation, and final result my own. I care about clean code,
+              good UX, performance, and building products that feel simple to
+              use and maintain.
             </p>
           </div>
-
         </section>
-
 
         {/* =====================================
             FOCUS
@@ -165,32 +124,19 @@ const AboutMe = () => {
             lg:gap-20
           "
         >
-
-          <SectionLabel>
-            02 / Focus
-          </SectionLabel>
-
+          <SectionLabel>02 / Focus</SectionLabel>
 
           <div className="border-t border-white/[0.07]">
-
-            {ABOUT_FOCUS.map(
-              (item, index) => (
-                <FocusRow
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  isLast={
-                    index ===
-                    ABOUT_FOCUS.length - 1
-                  }
-                />
-              )
-            )}
-
+            {ABOUT_FOCUS.map((item, index) => (
+              <FocusRow
+                key={item.id}
+                item={item}
+                index={index}
+                isLast={index === ABOUT_FOCUS.length - 1}
+              />
+            ))}
           </div>
-
         </section>
-
 
         {/* =====================================
             CONTACT
@@ -217,7 +163,6 @@ const AboutMe = () => {
             Contact
           </p>
 
-
           <a
             href={`mailto:${PROFILE.email}`}
             className="
@@ -240,22 +185,16 @@ const AboutMe = () => {
             {PROFILE.email}
           </a>
         </section>
-
       </PageContainer>
-
     </div>
-  )
-}
-
+  );
+};
 
 /* =========================================
    FACT
 ========================================= */
 
-const Fact = ({
-  label,
-  value,
-}) => {
+const Fact = ({ label, value }) => {
   return (
     <div>
       <p
@@ -269,7 +208,6 @@ const Fact = ({
         {label}
       </p>
 
-
       <p
         className="
           mt-2
@@ -280,17 +218,14 @@ const Fact = ({
         {value}
       </p>
     </div>
-  )
-}
-
+  );
+};
 
 /* =========================================
    SECTION LABEL
 ========================================= */
 
-const SectionLabel = ({
-  children,
-}) => {
+const SectionLabel = ({ children }) => {
   return (
     <div>
       <p
@@ -304,8 +239,7 @@ const SectionLabel = ({
         {children}
       </p>
     </div>
-  )
-}
+  );
+};
 
-
-export default AboutMe
+export default AboutMe;

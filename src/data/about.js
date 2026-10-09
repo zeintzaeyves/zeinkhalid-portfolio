@@ -15,7 +15,7 @@ export const ABOUT_FOCUS = [
 
   {
     id: "frontend",
-    title: "Frontend Engineering",
+    title: "Frontend Development",
     description:
       "Creating responsive React and Next.js interfaces with reusable components and maintainable frontend architecture.",
   },

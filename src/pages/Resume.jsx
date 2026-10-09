@@ -195,7 +195,7 @@ const Resume = () => {
               text-neutral-500
             "
           >
-            Full-stack developer with experience building
+            Software Web developer with experience building
             responsive web applications, CMS-driven websites,
             reusable frontend systems, backend functionality,
             APIs, databases, and AI-integrated product

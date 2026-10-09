@@ -15,7 +15,6 @@ import useDocumentTitle from "@/hooks/useDocumentTitle.js"
 
 import Home from "@/pages/Home.jsx"
 
-
 /* =====================================
    LAZY PAGES
 ===================================== */
@@ -40,8 +39,8 @@ const TechStack = lazy(
   () => import("@/pages/TechStack.jsx"),
 )
 
-const Certifications = lazy(
-  () => import("@/pages/Certifications.jsx"),
+const Elsewhere = lazy(
+  () => import("@/pages/Elsewhere.jsx"),
 )
 
 const Resume = lazy(
@@ -59,7 +58,6 @@ const TalkToZeinOverlay = lazy(
     ),
 )
 
-
 /* =====================================
    PAGE REGISTRY
 ===================================== */
@@ -71,11 +69,14 @@ const PAGE_COMPONENTS = {
   projects: SelectedWork,
   academic: AcademicWork,
   stack: TechStack,
-  certifications: Certifications,
+  elsewhere: Elsewhere,
   resume: Resume,
   contact: Contact,
 }
 
+/* =====================================
+   FALLBACK
+===================================== */
 
 const PageFallback = () => {
   return (
@@ -90,6 +91,9 @@ const PageFallback = () => {
   )
 }
 
+/* =====================================
+   APP SHELL
+===================================== */
 
 const AppShell = () => {
   const [activePage, setActivePage] =
@@ -112,17 +116,16 @@ const AppShell = () => {
         return false
       }
 
-      return window.matchMedia(
-        "(min-width: 1024px)",
-      ).matches
+      return window
+        .matchMedia(
+          "(min-width: 1024px)",
+        )
+        .matches
     })
-
 
   const mainRef = useRef(null)
 
-
   useDocumentTitle(activePage)
-
 
   /* =====================================
      NAVIGATION
@@ -135,7 +138,6 @@ const AppShell = () => {
 
     setSidebarOpen(false)
 
-
     if (page === activePage) {
       mainRef.current?.scrollTo({
         top: 0,
@@ -144,7 +146,6 @@ const AppShell = () => {
 
       return
     }
-
 
     const changePage = () => {
       flushSync(() => {
@@ -157,7 +158,6 @@ const AppShell = () => {
       })
     }
 
-
     if (
       typeof document !== "undefined" &&
       "startViewTransition" in document
@@ -169,10 +169,8 @@ const AppShell = () => {
       return
     }
 
-
     changePage()
   }
-
 
   /* =====================================
      TALK TO ZEIN
@@ -184,11 +182,9 @@ const AppShell = () => {
     setTalkOpen(true)
   }
 
-
   const closeTalk = () => {
     setTalkOpen(false)
   }
-
 
   /* =====================================
      RESPONSIVE
@@ -200,30 +196,22 @@ const AppShell = () => {
         "(min-width: 1024px)",
       )
 
-
-    const handleChange = (
-      event,
-    ) => {
-      setIsDesktop(
-        event.matches,
-      )
+    const handleChange = (event) => {
+      setIsDesktop(event.matches)
 
       if (event.matches) {
         setSidebarOpen(false)
       }
     }
 
-
     setIsDesktop(
       mediaQuery.matches,
     )
-
 
     mediaQuery.addEventListener(
       "change",
       handleChange,
     )
-
 
     return () => {
       mediaQuery.removeEventListener(
@@ -233,21 +221,16 @@ const AppShell = () => {
     }
   }, [])
 
-
   /* =====================================
      KEYBOARD
   ===================================== */
 
   useEffect(() => {
-    const handleKeyDown = (
-      event,
-    ) => {
+    const handleKeyDown = (event) => {
       const key =
         event.key.toLowerCase()
 
-      const target =
-        event.target
-
+      const target = event.target
 
       const isTyping =
         target instanceof
@@ -256,6 +239,9 @@ const AppShell = () => {
           HTMLTextAreaElement ||
         target?.isContentEditable
 
+      /* -------------------------------
+         ESCAPE
+      -------------------------------- */
 
       if (event.key === "Escape") {
         if (talkOpen) {
@@ -263,7 +249,6 @@ const AppShell = () => {
           closeTalk()
           return
         }
-
 
         if (
           sidebarOpen &&
@@ -274,15 +259,20 @@ const AppShell = () => {
           return
         }
 
-
         return
       }
 
+      /* -------------------------------
+         TALK OPEN
+      -------------------------------- */
 
       if (talkOpen) {
         return
       }
 
+      /* -------------------------------
+         IGNORE TYPING
+      -------------------------------- */
 
       if (
         isTyping &&
@@ -292,6 +282,9 @@ const AppShell = () => {
         return
       }
 
+      /* -------------------------------
+         FIND NAVIGATION ITEM
+      -------------------------------- */
 
       const navigationItem =
         NAVIGATION_ITEMS.find(
@@ -299,28 +292,23 @@ const AppShell = () => {
             const shortcut =
               item.shortcut
 
-
             if (!shortcut) {
               return false
             }
 
-
             const keyMatches =
               key ===
               shortcut.key.toLowerCase()
-
 
             const altMatches =
               Boolean(
                 shortcut.altKey,
               ) === event.altKey
 
-
             const ctrlMatches =
               Boolean(
                 shortcut.ctrlKey,
               ) === event.ctrlKey
-
 
             return (
               keyMatches &&
@@ -330,14 +318,15 @@ const AppShell = () => {
           },
         )
 
-
       if (!navigationItem) {
         return
       }
 
-
       event.preventDefault()
 
+      /* -------------------------------
+         TALK
+      -------------------------------- */
 
       if (
         navigationItem.action ===
@@ -347,18 +336,19 @@ const AppShell = () => {
         return
       }
 
+      /* -------------------------------
+         PAGE
+      -------------------------------- */
 
       navigateTo(
         navigationItem.id,
       )
     }
 
-
     window.addEventListener(
       "keydown",
       handleKeyDown,
     )
-
 
     return () => {
       window.removeEventListener(
@@ -373,27 +363,34 @@ const AppShell = () => {
     isDesktop,
   ])
 
+  /* =====================================
+     ACTIVE PAGE
+  ===================================== */
 
   const ActivePage =
     PAGE_COMPONENTS[activePage] ??
     Home
 
-
   const mobileNavigationOpen =
-    sidebarOpen &&
-    !isDesktop
+    sidebarOpen && !isDesktop
 
+  /* =====================================
+     RENDER
+  ===================================== */
 
   return (
     <div
       className="
         h-screen
         overflow-hidden
-
         bg-[#0b0b0c]
         text-white
       "
     >
+      {/* =================================
+          SIDEBAR
+      ================================= */}
+
       <PortfolioSidebar
         activePage={activePage}
         onNavigate={navigateTo}
@@ -407,6 +404,9 @@ const AppShell = () => {
         isDesktop={isDesktop}
       />
 
+      {/* =================================
+          MOBILE OVERLAY
+      ================================= */}
 
       {mobileNavigationOpen && (
         <button
@@ -420,15 +420,16 @@ const AppShell = () => {
             fixed
             inset-0
             z-40
-
             bg-black/70
             backdrop-blur-[2px]
-
             lg:hidden
           "
         />
       )}
 
+      {/* =================================
+          MOBILE HEADER
+      ================================= */}
 
       {!talkOpen && (
         <header
@@ -437,20 +438,15 @@ const AppShell = () => {
             inset-x-0
             top-0
             z-30
-
             flex
             h-[54px]
             items-center
             justify-between
-
             border-b
             border-white/[0.08]
-
             bg-[#0b0b0c]/95
             px-6
-
             backdrop-blur-md
-
             lg:hidden
           "
         >
@@ -464,16 +460,13 @@ const AppShell = () => {
               font-medium
               tracking-[-0.025em]
               text-neutral-200
-
               transition-colors
               duration-200
-
               hover:text-white
             "
           >
             Zein Khalid
           </button>
-
 
           <button
             type="button"
@@ -491,12 +484,9 @@ const AppShell = () => {
               w-10
               items-center
               justify-end
-
               text-neutral-400
-
               transition-colors
               duration-200
-
               hover:text-white
             "
           >
@@ -508,6 +498,9 @@ const AppShell = () => {
         </header>
       )}
 
+      {/* =================================
+          MAIN
+      ================================= */}
 
       <main
         ref={mainRef}
@@ -526,9 +519,7 @@ const AppShell = () => {
         className="
           h-screen
           overflow-y-auto
-
           bg-[#0b0b0c]
-
           lg:ml-[320px]
         "
       >
@@ -536,7 +527,6 @@ const AppShell = () => {
           className="
             min-h-full
             pt-[54px]
-
             lg:pt-0
           "
         >
@@ -565,6 +555,9 @@ const AppShell = () => {
         </div>
       </main>
 
+      {/* =================================
+          TALK TO ZEIN OVERLAY
+      ================================= */}
 
       {talkLoaded && (
         <Suspense fallback={null}>
@@ -577,6 +570,5 @@ const AppShell = () => {
     </div>
   )
 }
-
 
 export default AppShell

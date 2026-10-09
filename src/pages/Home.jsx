@@ -24,7 +24,7 @@ const Home = ({
 
       <PageHeader
         eyebrow="Zein / Index"
-        meta="Full-Stack & AI Development"
+        meta="Front-end & Web Design"
       />
 
 

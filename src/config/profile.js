@@ -2,12 +2,12 @@ export const PROFILE = {
   name: "Zein Khalid Bulaclac",
 
   roles: [
-    "Full-Stack Developer",
-    "AI Application Developer",
+    "Frontend Developer & Web Designer",
+    "UI/UX",
   ],
 
   shortRole:
-    "Full-Stack / AI Development",
+    "Frontend Development / Website Design",
 
   location: "Philippines",
   timezone: "GMT+8",

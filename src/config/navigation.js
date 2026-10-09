@@ -41,9 +41,9 @@ export const NAVIGATION_ITEMS = [
     label: "Selected Work",
     action: "page",
     shortcut: {
-      key: "p",
+      key: "w",
       altKey: true,
-      display: "Alt + P",
+      display: "Alt + W",
     },
   },
 
@@ -53,9 +53,9 @@ export const NAVIGATION_ITEMS = [
     label: "Academic Work",
     action: "page",
     shortcut: {
-      key: "u",
+      key: "c",
       altKey: true,
-      display: "Alt + U",
+      display: "Alt + C",
     },
   },
 
@@ -65,21 +65,21 @@ export const NAVIGATION_ITEMS = [
     label: "Tech Stack",
     action: "page",
     shortcut: {
-      key: "s",
+      key: "t",
       altKey: true,
-      display: "Alt + S",
+      display: "Alt + T",
     },
   },
 
   {
-    id: "certifications",
+    id: "elsewhere",
     number: "06",
-    label: "Certifications",
+    label: "Elsewhere",
     action: "page",
     shortcut: {
-      key: "c",
+      key: "l",
       altKey: true,
-      display: "Alt + C",
+      display: "Alt + L",
     },
   },
 
@@ -101,9 +101,9 @@ export const NAVIGATION_ITEMS = [
     label: "Contact",
     action: "page",
     shortcut: {
-      key: "t",
+      key: "c",
       altKey: true,
-      display: "Alt + T",
+      display: "Alt + C",
     },
   },
 
@@ -113,9 +113,9 @@ export const NAVIGATION_ITEMS = [
     label: "Talk to Zein",
     action: "talk",
     shortcut: {
-      key: "j",
-      ctrlKey: true,
-      display: "Ctrl + J",
+      key: "z",
+      altKey: true,
+      display: "Alt + Z",
     },
   },
 ]

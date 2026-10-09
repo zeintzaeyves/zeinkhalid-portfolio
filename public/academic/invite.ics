@@ -1,0 +1,77 @@
+BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Asia/Manila
+X-LIC-LOCATION:Asia/Manila
+BEGIN:STANDARD
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+TZNAME:GMT+8
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART;TZID=Asia/Manila:20260909T133000
+DTEND;TZID=Asia/Manila:20260909T163000
+DTSTAMP:20260908T052135Z
+ORGANIZER;CN=Jobs Kooapps:mailto:jobs@kooappsinc.com
+UID:20r0mql8mmuefsl6uuc0j5t65h@google.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=
+ TRUE;CN=bulaclaczeinkhalidjornadal@gmail.com;X-NUM-GUESTS=0:mailto:bulaclac
+ zeinkhalidjornadal@gmail.com
+X-GOOGLE-CONFERENCE:https://meet.google.com/mpm-jqeo-aoh
+X-MICROSOFT-CDO-OWNERAPPTID:673275284
+CREATED:20260907T233550Z
+DESCRIPTION:<b>Invitation Online Interview - Kooapps Philippines Inc.<br></
+ b><b><br>Position: </b>Backend Programmer<br><b>Date: </b>September 9\, 202
+ 6<br><b>Time:  </b>1:30PM - 4:30PM<br><b>Duration:</b> 2 - 4 hours<br><br><
+ b><br>REMINDERS/NOTES:</b><b> </b>Kindly prepare a laptop or desktop for yo
+ ur interview. Thank you<br> <ol><li>There will be an interview and a coding
+  test.</li><li><u><b>No confirmation = No interview</b></u></li><li>Email o
+ r text us if you cannot attend the interview\, otherwise\, you will be mark
+ ed "No Show"</li><li><b>Interview link: </b>please refer to the Google Meet
+  link included in this email.</li><li>Be online at least 5 minutes before t
+ he interview for the final equipment check. The interview room will be lock
+ ed afterward.</li></ol>Check this <a href="https://www.facebook.com/2962586
+ 53858951/posts/1585791278239009/" target="_blank"><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u>link</u
+ ></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></
+ u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u><
+ /u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u>
+ </u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u
+ ></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></
+ u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u><
+ /u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></a>
+  for some tips on online interviews.<br><ol><li><ol><b><i>&gt\; Contact Inf
+ ormation:</i></b><br>E: <a href="mailto:jobs@kooappsinc.com" target="_blank
+ "><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><u><
+ u><u><u><u><u><u><u><u>jobs@kooappsinc.com</u></u></u></u></u></u></u></u><
+ /u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u>
+ </u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u
+ ></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></
+ u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></u></a><
+ br>T: (02) 7007-1080<br>M: 0917 124 6536</ol></li></ol><ol><br>Looking forw
+ ard to meeting you soon.</ol>\n\n-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:
+ ~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~::~:~::-\nJoin with Google Meet: https
+ ://meet.google.com/mpm-jqeo-aoh\nOr dial: (US) +1 574-316-0021 PIN: 5704442
+ 67#\nMore phone numbers: https://tel.meet/mpm-jqeo-aoh?pin=8644446072802&hs
+ =7\n\nLearn more about Meet at: https://support.google.com/a/users/answer/9
+ 282720\n\nPlease do not edit this section.\n-::~:~::~:~:~:~:~:~:~:~:~:~:~:~
+ :~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~::~:~::-
+LAST-MODIFIED:20260908T052132Z
+LOCATION:https://meet.google.com/mpm-jqeo-aoh
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Backend Programmer Interview
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
