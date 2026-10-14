@@ -1,5 +1,14 @@
 export const PROJECTS = [
   {
+    id: "invoice-processor",
+    title: "Invoice Processor",
+    type: "Full-Stack Application",
+    description:
+      "Create invoices, issue receipts, and convert totals across currencies. Everything you need to keep your business documents organized, in one place.",
+    url: "https://voiceprocessor-phi.vercel.app/",
+  },
+
+  {
     id: "talk-to-zein",
     title: "Talk To Zein",
     type: "AI Application",
@@ -61,8 +70,6 @@ export const PROJECTS = [
       "Frontend development and website quality improvements for a premium real estate experience, including performance auditing.",
     url: "https://prestigebyfilinvest.com/",
   },
-]
+];
 
-
-export const FEATURED_PROJECTS =
-  PROJECTS.slice(0, 3)
+export const FEATURED_PROJECTS = PROJECTS.slice(0, 3);
