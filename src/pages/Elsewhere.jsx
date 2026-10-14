@@ -1,102 +1,107 @@
-"use client"
 
-import { useEffect, useRef, useState } from "react"
-import { PROFILE } from "@/config/profile.js"
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { PROFILE } from "@/config/profile.js";
 
 const MUSIC = {
   title: "Slap the City",
   artist: "Drake",
   album: "Habibti",
-  cover: "/public/music/habibti.jpg",
-  audio: "/public/music/habibti.mp3",
-}
+  cover: "/music/habibti.jpg",
+  audio: "/music/habibti.mp3",
+};
 
 const formatTime = (seconds) => {
-  if (!Number.isFinite(seconds)) return "0:00"
+  if (!Number.isFinite(seconds)) return "0:00";
 
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = Math.floor(seconds % 60)
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
 
-  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
-}
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+};
 
 const Elsewhere = () => {
-  const audioRef = useRef(null)
+  const audioRef = useRef(null);
 
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  const socials = Object.values(PROFILE.socials ?? {})
+  const socials = Object.values(PROFILE.socials ?? {});
 
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
-    if (!audio) return
+    if (!audio) return;
 
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime)
-    }
+      setCurrentTime(audio.currentTime);
+    };
 
     const handleLoadedMetadata = () => {
-      setDuration(audio.duration)
-    }
+      setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+    };
 
     const handleEnded = () => {
-      setIsPlaying(false)
-      setCurrentTime(0)
-    }
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
 
-    audio.addEventListener("timeupdate", handleTimeUpdate)
-    audio.addEventListener("loadedmetadata", handleLoadedMetadata)
-    audio.addEventListener("ended", handleEnded)
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
 
     return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate)
-      audio.removeEventListener("loadedmetadata", handleLoadedMetadata)
-      audio.removeEventListener("ended", handleEnded)
-    }
-  }, [])
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+    };
+  }, []);
 
   const togglePlay = async () => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
-    if (!audio) return
+    if (!audio) return;
 
     try {
       if (audio.paused) {
-        await audio.play()
-        setIsPlaying(true)
+        await audio.play();
       } else {
-        audio.pause()
-        setIsPlaying(false)
+        audio.pause();
       }
     } catch (error) {
-      console.error("Unable to play audio:", error)
-      setIsPlaying(false)
+      console.error("Unable to play audio:", error);
+      setIsPlaying(false);
     }
-  }
+  };
 
   const handleSeek = (event) => {
-    const audio = audioRef.current
+    const audio = audioRef.current;
 
-    if (!audio || !duration) return
+    if (!audio || !duration) return;
 
-    const nextTime = Number(event.target.value)
+    const nextTime = Number(event.target.value);
 
-    audio.currentTime = nextTime
-    setCurrentTime(nextTime)
-  }
+    audio.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  };
 
   const progress =
     duration > 0
       ? Math.min(100, Math.max(0, (currentTime / duration) * 100))
-      : 0
+      : 0;
 
   return (
     <main className="min-h-screen bg-[#0b0b0c] text-white">
       <div className="mx-auto w-full max-w-7xl px-6 py-16 md:px-10 md:py-20 lg:px-14">
-
         {/* HEADER */}
         <header className="mb-12 md:mb-16">
           <div className="flex items-center gap-3">
@@ -117,21 +122,16 @@ const Elsewhere = () => {
             </h1>
 
             <p className="mt-6 max-w-xl text-sm leading-7 text-white/40 md:text-base">
-              A little corner of the things I listen to, watch,
-              play, and enjoy when I&apos;m not building things.
+              A little corner of the things I listen to, watch, play, and enjoy
+              when I&apos;m not building things.
             </p>
           </div>
         </header>
 
         {/* BENTO GRID */}
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-
-          {/* =====================================================
-              MUSIC PLAYER
-          ===================================================== */}
+          {/* MUSIC PLAYER */}
           <article className="group relative min-h-[420px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113] md:col-span-2 lg:col-span-2 lg:row-span-2">
-
-            {/* LOCAL AUDIO */}
             <audio
               ref={audioRef}
               src={MUSIC.audio}
@@ -143,17 +143,15 @@ const Elsewhere = () => {
               <img
                 src={MUSIC.cover}
                 alt=""
-                className="absolute inset-[-10%] h-[120%] w-[120%] object-cover scale-110 opacity-30 blur-3xl transition duration-700 group-hover:opacity-40"
+                className="absolute inset-[-10%] h-[120%] w-[120%] scale-110 object-cover opacity-30 blur-3xl transition duration-700 group-hover:opacity-40"
               />
 
               <div className="absolute inset-0 bg-black/50" />
-
               <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/20 to-black/80" />
             </div>
 
             {/* PLAYER */}
             <div className="relative flex min-h-[420px] flex-col items-center justify-between p-6 md:p-8">
-
               {/* TOP */}
               <div className="flex w-full items-center justify-between">
                 <div>
@@ -174,7 +172,6 @@ const Elsewhere = () => {
               {/* ALBUM ART */}
               <div className="flex w-full flex-1 items-center justify-center py-8">
                 <div className="relative aspect-square w-[210px] overflow-hidden rounded-[24px] shadow-2xl shadow-black/50 md:w-[250px]">
-
                   <img
                     src={MUSIC.cover}
                     alt={`${MUSIC.album} album cover`}
@@ -183,15 +180,12 @@ const Elsewhere = () => {
                     }`}
                   />
 
-                  {/* SUBTLE OVERLAY */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
               </div>
 
-              {/* BOTTOM INFO + CONTROLS */}
+              {/* SONG INFO + CONTROLS */}
               <div className="w-full">
-
-                {/* SONG INFO */}
                 <div className="mb-5 flex items-end justify-between gap-4">
                   <div className="min-w-0">
                     <p className="truncate text-xl font-medium tracking-[-0.03em] md:text-2xl">
@@ -214,7 +208,7 @@ const Elsewhere = () => {
                   min="0"
                   max={duration || 0}
                   step="0.1"
-                  value={currentTime}
+                  value={Math.min(currentTime, duration || 0)}
                   onChange={handleSeek}
                   aria-label="Music progress"
                   className="music-range h-[3px] w-full cursor-pointer appearance-none rounded-full"
@@ -260,13 +254,11 @@ const Elsewhere = () => {
             </div>
           </article>
 
-          {/* =====================================================
-              LAST PLAYED GAME
-          ===================================================== */}
+          {/* LAST PLAYED GAME */}
           <article className="group relative min-h-[260px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113]">
             <div className="absolute inset-0">
               <img
-                src="/public/elsewhere/game.jpg"
+                src="/elsewhere/game.jpg"
                 alt=""
                 className="h-full w-full object-cover opacity-40 transition duration-700 group-hover:scale-105 group-hover:opacity-55"
               />
@@ -297,13 +289,11 @@ const Elsewhere = () => {
             </div>
           </article>
 
-          {/* =====================================================
-              SERIES
-          ===================================================== */}
+          {/* SERIES */}
           <article className="group relative min-h-[260px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113]">
             <div className="absolute inset-0">
               <img
-                src="/public/elsewhere/series.jpg"
+                src="/elsewhere/series.jpg"
                 alt=""
                 className="h-full w-full object-cover opacity-40 transition duration-700 group-hover:scale-105 group-hover:opacity-55"
               />
@@ -328,13 +318,11 @@ const Elsewhere = () => {
             </div>
           </article>
 
-          {/* =====================================================
-              MOVIE
-          ===================================================== */}
+          {/* MOVIE */}
           <article className="group relative min-h-[260px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113] lg:col-span-2">
             <div className="absolute inset-0">
               <img
-                src="/public/elsewhere/movie.jpg"
+                src="/elsewhere/movie.jpg"
                 alt=""
                 className="h-full w-full object-cover opacity-35 transition duration-700 group-hover:scale-105 group-hover:opacity-50"
               />
@@ -359,12 +347,9 @@ const Elsewhere = () => {
             </div>
           </article>
 
-          {/* =====================================================
-              SOCIALS
-          ===================================================== */}
+          {/* SOCIALS */}
           <article className="min-h-[250px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113] p-6 md:col-span-2 md:p-7">
             <div className="flex h-full flex-col justify-between">
-
               <div className="flex items-start justify-between">
                 <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/45">
                   Find me elsewhere
@@ -397,12 +382,9 @@ const Elsewhere = () => {
             </div>
           </article>
 
-          {/* =====================================================
-              LOCATION
-          ===================================================== */}
+          {/* LOCATION */}
           <article className="min-h-[250px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111113] p-6 md:col-span-2 md:p-7">
             <div className="flex h-full flex-col justify-between">
-
               <div className="flex items-start justify-between">
                 <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/45">
                   Somewhere in
@@ -467,7 +449,7 @@ const Elsewhere = () => {
         }
       `}</style>
     </main>
-  )
-}
+  );
+};
 
-export default Elsewhere
+export default Elsewhere;
